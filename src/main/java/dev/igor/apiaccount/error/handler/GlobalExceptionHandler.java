@@ -1,5 +1,6 @@
 package dev.igor.apiaccount.error.handler;
 
+import dev.igor.apiaccount.error.AccountNotFoundException;
 import dev.igor.apiaccount.error.UserNotFoundException;
 import dev.igor.apiaccount.error.response.Error;
 import dev.igor.apiaccount.error.response.ResponseError;
@@ -37,5 +38,14 @@ public class GlobalExceptionHandler {
                         HttpStatus.BAD_REQUEST.toString(),
                         ex.getMessage(),
                         UserNotFoundException.class.getSimpleName()));
+    }
+
+    @ExceptionHandler(AccountNotFoundException.class)
+    public ResponseEntity<ResponseError> handleAccountNotFoundException(AccountNotFoundException ex) {
+        return ResponseEntity.badRequest().body(
+                new ResponseError(
+                        HttpStatus.BAD_REQUEST.toString(),
+                        ex.getMessage(),
+                        AccountNotFoundException.class.getSimpleName()));
     }
 }
