@@ -4,11 +4,13 @@ import dev.igor.apiaccount.api.request.AccountRequest;
 import dev.igor.apiaccount.api.response.AccountResponse;
 import dev.igor.apiaccount.client.UserClient;
 import dev.igor.apiaccount.dto.UserDTO;
+import dev.igor.apiaccount.error.AccountNotFoundException;
 import dev.igor.apiaccount.model.Account;
 import dev.igor.apiaccount.repository.AccountRepository;
 import dev.igor.apiaccount.service.AccountService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -30,8 +32,21 @@ public class AccountServiceImpl implements AccountService {
         return AccountResponse.of(account);
     }
 
+    @Override
+    public AccountResponse findAccountByAccountCode(String accountCode) {
+        Optional<Account> account = this.findByAccountCode(accountCode);
+        if (account.isEmpty()) {
+            throw new AccountNotFoundException();
+        }
+        return AccountResponse.of(account.get());
+    }
+
     private String gen() {
         Random r = new Random( System.currentTimeMillis() );
         return String.valueOf((1 + r.nextInt(2)) * 10000 + r.nextInt(10000));
+    }
+
+    private Optional<Account> findByAccountCode(String accountCode) {
+        return repository.findByAccountCode(accountCode);
     }
 }
