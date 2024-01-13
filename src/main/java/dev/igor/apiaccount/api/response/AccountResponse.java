@@ -9,10 +9,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class AccountResponse {
+    private String id;
     private String accountCode;
     private String userId;
 
     public static AccountResponse of(Account account) {
-        return new AccountResponse(account.getAccountCode(), account.getUserId());
+        return new AccountResponse(account.getId(), account.getAccountCode(), account.getUserId());
     }
 }
