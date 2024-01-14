@@ -8,10 +8,10 @@ import java.util.Optional;
 import dev.igor.apiaccount.dto.Transaction;
 import dev.igor.apiaccount.model.Account;
 import dev.igor.apiaccount.repository.AccountRepository;
-import dev.igor.apiaccount.service.OutcomeService;
+import dev.igor.apiaccount.service.TransactionService;
 
 @Service
-public class OutcomeServiceImpl implements OutcomeService {
+public class OutcomeServiceImpl implements TransactionService {
     private final AccountRepository repository;
 
     public OutcomeServiceImpl(AccountRepository repository) {
@@ -23,6 +23,15 @@ public class OutcomeServiceImpl implements OutcomeService {
         Optional<Account> account = repository.findById(transaction.getSourceAccount());
         if (account.isPresent()) {
             account.get().setAccountBalance(account.get().getAccountBalance().subtract(new BigDecimal(transaction.getAmount())));
+            repository.save(account.get());
+        }
+    }
+
+    @Override
+    public void income(Transaction transaction) {
+        Optional<Account> account = repository.findById(transaction.getSourceAccount());
+        if (account.isPresent()) {
+            account.get().setAccountBalance(account.get().getAccountBalance().add(new BigDecimal(transaction.getAmount())));
             repository.save(account.get());
         }
     }
