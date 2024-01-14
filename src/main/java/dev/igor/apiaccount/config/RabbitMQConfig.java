@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
     @Bean
-    public Queue myDurableQueue() {
+    public Queue queue() {
         // This queue has the following properties:
         // name: my_durable
         // durable: true
