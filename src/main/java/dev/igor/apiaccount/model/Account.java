@@ -31,7 +31,7 @@ public class Account {
 
     public static Account create(String accountCode, String agency, String userId) {
         String id = UUID.randomUUID().toString();
-        BigDecimal balance = new BigDecimal(0);
+        BigDecimal balance = new BigDecimal(1000);
         return new Account(id, accountCode, agency, userId, balance, AccountStatus.ACTIVE);
     }
 }
