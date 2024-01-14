@@ -25,4 +25,11 @@ public class AccountController {
     public ResponseEntity<AccountResponse> findByAccountCode(@PathVariable("accountCode") String accountCode) {
         return ResponseEntity.ok(service.findAccountByAccountCode(accountCode));
     }
+
+    @GetMapping("/available-balance")
+    public ResponseEntity<Object> availableBalance(
+            @RequestParam("accountCode") String accountCode,
+            @RequestParam("amount") String amount) {
+        return ResponseEntity.ok(service.availableBalance(accountCode, amount));
+    }
 }
