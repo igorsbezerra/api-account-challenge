@@ -6,7 +6,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class AccountAvailableBalanceResponse {
     private String available;
+
+    public AccountAvailableBalanceResponse(boolean available) {
+        this.available = String.valueOf(available);
+    }
 }

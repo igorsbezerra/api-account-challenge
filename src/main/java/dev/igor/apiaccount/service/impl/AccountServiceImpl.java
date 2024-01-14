@@ -50,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
             throw new AccountNotFoundException();
         }
 
-        return new AccountAvailableBalanceResponse(String.valueOf(account.get().getAccountBalance().doubleValue() >= Double.parseDouble(value)));
+        return new AccountAvailableBalanceResponse(account.get().getAccountBalance().doubleValue() >= Double.parseDouble(value));
     }
 
     private String gen() {
