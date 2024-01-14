@@ -1,6 +1,7 @@
 package dev.igor.apiaccount.service.impl;
 
 import dev.igor.apiaccount.api.request.AccountRequest;
+import dev.igor.apiaccount.api.response.AccountAvailableBalanceResponse;
 import dev.igor.apiaccount.api.response.AccountResponse;
 import dev.igor.apiaccount.client.UserClient;
 import dev.igor.apiaccount.dto.UserDTO;
@@ -10,6 +11,7 @@ import dev.igor.apiaccount.repository.AccountRepository;
 import dev.igor.apiaccount.service.AccountService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Random;
 
@@ -39,6 +41,16 @@ public class AccountServiceImpl implements AccountService {
             throw new AccountNotFoundException();
         }
         return AccountResponse.of(account.get());
+    }
+
+    @Override
+    public AccountAvailableBalanceResponse availableBalance(String accountCode, String value) {
+        Optional<Account> account = this.findByAccountCode(accountCode);
+        if (account.isEmpty()) {
+            throw new AccountNotFoundException();
+        }
+
+        return new AccountAvailableBalanceResponse(String.valueOf(account.get().getAccountBalance().doubleValue() >= Double.parseDouble(value)));
     }
 
     private String gen() {
