@@ -23,6 +23,7 @@ public class OutcomeServiceImpl implements OutcomeService {
         Optional<Account> account = repository.findById(transaction.getSourceAccount());
         if (account.isPresent()) {
             account.get().setAccountBalance(account.get().getAccountBalance().subtract(new BigDecimal(transaction.getAmount())));
+            repository.save(account.get());
         }
     }
 }
