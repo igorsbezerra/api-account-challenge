@@ -11,10 +11,10 @@ import dev.igor.apiaccount.repository.AccountRepository;
 import dev.igor.apiaccount.service.TransactionService;
 
 @Service
-public class OutcomeServiceImpl implements TransactionService {
+public class TransactionServiceImpl implements TransactionService {
     private final AccountRepository repository;
 
-    public OutcomeServiceImpl(AccountRepository repository) {
+    public TransactionServiceImpl(AccountRepository repository) {
         this.repository = repository;
     }
 
@@ -29,7 +29,7 @@ public class OutcomeServiceImpl implements TransactionService {
 
     @Override
     public void income(Transaction transaction) {
-        Optional<Account> account = repository.findById(transaction.getSourceAccount());
+        Optional<Account> account = repository.findById(transaction.getTargetAccount());
         if (account.isPresent()) {
             account.get().setAccountBalance(account.get().getAccountBalance().add(new BigDecimal(transaction.getAmount())));
             repository.save(account.get());
