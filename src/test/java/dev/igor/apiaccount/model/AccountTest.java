@@ -46,6 +46,7 @@ public class AccountTest {
         Assertions.assertEquals(expectedStatus, account2.getStatus());
     }
 
+    @Test
     void create_method() {
         final var expectedAccountCode = "123456";
         final var expectedAgency = "santander";
