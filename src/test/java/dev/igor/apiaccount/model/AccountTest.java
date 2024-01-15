@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import dev.igor.apiaccount.model.enums.AccountStatus;
 
 @ExtendWith(MockitoExtension.class)
-public class TransactionTest {
+public class AccountTest {
     @Test
     void getter_and_setter() {
         final var expectedId = UUID.randomUUID().toString();
