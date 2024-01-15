@@ -16,6 +16,9 @@ public class UserDTOTest {
         final var expectedDocument = "document";
 
         UserDTO userDTO = new UserDTO();
+        userDTO.setId(expectedId);
+        userDTO.setName(expectedName);
+        userDTO.setDocument(expectedDocument);
 
         Assertions.assertEquals(expectedId, userDTO.getId());
         Assertions.assertEquals(expectedName, userDTO.getName());
