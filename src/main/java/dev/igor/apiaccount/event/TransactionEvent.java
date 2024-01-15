@@ -8,20 +8,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.igor.apiaccount.dto.Transaction;
-import dev.igor.apiaccount.service.OutcomeService;
+import dev.igor.apiaccount.service.TransactionService;
 
 @Component
-public class OutcomeTransaction {
-    private final OutcomeService service;
+public class TransactionEvent {
+    private final TransactionService service;
     private final ObjectMapper mapper;
 
-    public OutcomeTransaction(ObjectMapper mapper, OutcomeService service) {
+    public TransactionEvent(ObjectMapper mapper, TransactionService service) {
         this.mapper = mapper;
         this.service = service;
     }
 
-    @RabbitListener(queues = {"file-teste"})
-    public void receive(@Payload String message) {
+    @RabbitListener(queues = {"queue-outcome"})
+    public void receiveOutcome(@Payload String message) {
         Transaction transaction;
         try {
             transaction = mapper.readValue(message, Transaction.class);
@@ -29,5 +29,16 @@ public class OutcomeTransaction {
             throw new RuntimeException("Failed to generate Object Java with message");
         }
         service.outcome(transaction);
+    }
+
+    @RabbitListener(queues = {"queue-income"})
+    public void receiveIncome(@Payload String message) {
+        Transaction transaction;
+        try {
+            transaction = mapper.readValue(message, Transaction.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to generate Object Java with message");
+        }
+        service.income(transaction);
     }
 }   
