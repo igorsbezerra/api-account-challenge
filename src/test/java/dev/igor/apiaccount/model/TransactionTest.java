@@ -45,4 +45,18 @@ public class TransactionTest {
         Assertions.assertEquals(expectedBalance, account2.getAccountBalance());
         Assertions.assertEquals(expectedStatus, account2.getStatus());
     }
+
+    void create_method() {
+        final var expectedAccountCode = "123456";
+        final var expectedAgency = "santander";
+        final var expecetedUserId = UUID.randomUUID().toString();
+
+        Account account = Account.create(expectedAccountCode, expectedAgency, expecetedUserId);
+
+        Assertions.assertNotNull(account.getId());
+        Assertions.assertEquals(expectedAccountCode, account.getAccountCode());
+        Assertions.assertEquals(expectedAgency, account.getAgency());
+        Assertions.assertEquals(expecetedUserId, account.getUserId());
+        Assertions.assertNotNull(account.getStatus());
+    }
 }
