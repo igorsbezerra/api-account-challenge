@@ -1,7 +1,5 @@
 package dev.igor.apiaccount.api.controller;
 
-import static org.mockito.Mockito.when;
-
 import java.util.UUID;
 
 import org.junit.jupiter.api.Assertions;
