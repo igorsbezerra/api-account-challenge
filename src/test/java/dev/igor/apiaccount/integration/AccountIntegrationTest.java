@@ -3,7 +3,6 @@ package dev.igor.apiaccount.integration;
 import java.util.UUID;
 
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +61,7 @@ public class AccountIntegrationTest {
     }
     
     @Test
-    void test() throws Exception {
+    void it_must_be_possible_to_create_a_user_when_executing_post_endpoint() throws Exception {
         String userJson = createUserJson();
         mockServer.when(
             HttpRequest.request().withMethod("GET").withPathParameter("document", "34686598650")
@@ -80,7 +79,28 @@ public class AccountIntegrationTest {
     }
 
     @Test
-    void test2() {}
+    void it_should_not_be_possible_to_create_a_user_when_executing_endpoint_post() throws JsonProcessingException, Exception {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/accounts")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(createInvalidJson())
+        ).andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
+    void it_should_not_be_possible_to_create_a_user_when_executing_endpoint_post_user_not_found() throws JsonProcessingException, Exception {
+        mockServer.when(
+            HttpRequest.request().withMethod("GET").withPathParameter("document", "34686598650")
+        ).respond(
+            HttpResponse.response().withContentType(org.mockserver.model.MediaType.APPLICATION_JSON).withStatusCode(404)
+        );
+        
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/accounts")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(createInvalidJson())
+        ).andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
 
     @Test
     void test3() {}
@@ -88,6 +108,13 @@ public class AccountIntegrationTest {
     private String createJson() throws JsonProcessingException {
         ObjectNode objectNode = mapper.createObjectNode();
         objectNode.put("document", "34686598650");
+        objectNode.put("agency", "Santander - 090");
+        return mapper.writeValueAsString(objectNode);
+    }
+
+    private String createInvalidJson() throws JsonProcessingException {
+        ObjectNode objectNode = mapper.createObjectNode();
+        objectNode.put("document", "34");
         objectNode.put("agency", "Santander - 090");
         return mapper.writeValueAsString(objectNode);
     }
