@@ -1,6 +1,6 @@
 
 server:
-  port: 8081
+  port: 8080 
 
 spring:
   datasource:
@@ -19,11 +19,11 @@ spring:
   hibernate:
     ddl-auto: update
   rabbitmq:
-    host: rabbitmq
+    host: localhost
     port: 5672
-    username: admin
-    password: admin
+    username: guest
+    password: guest
 
 services:
   user:
-    url: http://user:8080
+    url: http://localhost:1080

@@ -5,6 +5,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.igor.apiaccount.dto.Transaction;
@@ -21,24 +22,14 @@ public class TransactionEvent {
     }
 
     @RabbitListener(queues = {"queue-outcome"})
-    public void receiveOutcome(@Payload String message) {
-        Transaction transaction;
-        try {
-            transaction = mapper.readValue(message, Transaction.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to generate Object Java with message");
-        }
+    public void receiveOutcome(@Payload String message) throws JsonMappingException, JsonProcessingException {
+        Transaction transaction = mapper.readValue(message, Transaction.class);
         service.outcome(transaction);
     }
 
     @RabbitListener(queues = {"queue-income"})
-    public void receiveIncome(@Payload String message) {
-        Transaction transaction;
-        try {
-            transaction = mapper.readValue(message, Transaction.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to generate Object Java with message");
-        }
+    public void receiveIncome(@Payload String message) throws JsonMappingException, JsonProcessingException {
+        Transaction transaction = mapper.readValue(message, Transaction.class);
         service.income(transaction);
     }
 }   

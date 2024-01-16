@@ -1,6 +1,7 @@
 package dev.igor.apiaccount.api.controller;
 
 import dev.igor.apiaccount.api.request.AccountRequest;
+import dev.igor.apiaccount.api.response.AccountAvailableBalanceResponse;
 import dev.igor.apiaccount.api.response.AccountResponse;
 import dev.igor.apiaccount.service.AccountService;
 import jakarta.validation.Valid;
@@ -29,7 +30,7 @@ public class AccountController {
     }
 
     @GetMapping("/available-balance")
-    public ResponseEntity<Object> availableBalance(
+    public ResponseEntity<AccountAvailableBalanceResponse> availableBalance(
             @RequestParam("accountCode") String accountCode,
             @RequestParam("amount") String amount) {
         return ResponseEntity.ok(service.availableBalance(accountCode, amount));

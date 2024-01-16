@@ -2,11 +2,9 @@ package dev.igor.apiaccount.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 public class Transaction {
     private String id;
     private String sourceAccount;
