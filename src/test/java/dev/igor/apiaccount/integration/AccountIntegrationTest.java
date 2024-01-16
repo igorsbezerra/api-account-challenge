@@ -2,12 +2,10 @@ package dev.igor.apiaccount.integration;
 
 import java.util.UUID;
 
-import org.junit.Rule;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.integration.ClientAndServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,12 +20,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import dev.igor.apiaccount.RabbitMQContainer;
 import dev.igor.apiaccount.dto.UserDTO;
 import dev.igor.apiaccount.repository.AccountRepository;
+
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 
 @SpringBootTest
 @ActiveProfiles(profiles = "test")
@@ -38,17 +37,15 @@ public class AccountIntegrationTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper mapper;
     @Autowired private AccountRepository repository;
-    @Rule private WireMockRule wireMockRule = new WireMockRule(8089);
+    private ClientAndServer mockServer;
 
     @Test
     void test() throws Exception {
 
-        WireMock.stubFor(WireMock.get(WireMock.urlPathEqualTo("/users"))
-                .withQueryParam("document", WireMock.equalTo("document"))
-                .willReturn(WireMock.aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(createUserJson())));
+        mockServer = new ClientAndServer().startClientAndServer(8089);
+        new MockServerClient("localhost", mockServer.getPort())
+            .when(request().withMethod("GET").withPath("/users/{param1}"))
+            .respond(response().withStatusCode(200).withBody(createUserJson()));
 
         String json = createJson();
 
