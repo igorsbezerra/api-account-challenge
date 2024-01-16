@@ -2,10 +2,17 @@ package dev.igor.apiaccount.integration;
 
 import java.util.UUID;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
+import org.mockserver.model.HttpRequest;
+import org.mockserver.model.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,30 +29,46 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import dev.igor.apiaccount.RabbitMQContainer;
+import dev.igor.apiaccount.client.UserClient;
 import dev.igor.apiaccount.dto.UserDTO;
 import dev.igor.apiaccount.repository.AccountRepository;
-
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
 
 @SpringBootTest
 @ActiveProfiles(profiles = "test")
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @ExtendWith({RabbitMQContainer.class})
+@TestInstance(Lifecycle.PER_CLASS)
 public class AccountIntegrationTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper mapper;
     @Autowired private AccountRepository repository;
+    @Autowired UserClient userClient;
     private ClientAndServer mockServer;
 
+    @BeforeAll
+    private void start() {
+        mockServer = ClientAndServer.startClientAndServer(8089);
+    }
+
+    @BeforeEach
+    private void reset() {
+        mockServer.reset();
+    }
+
+    @AfterAll
+    private void stop() {
+        mockServer.stop();
+    }
+    
     @Test
     void test() throws Exception {
-
-        mockServer = new ClientAndServer().startClientAndServer(8089);
-        new MockServerClient("localhost", mockServer.getPort())
-            .when(request().withMethod("GET").withPath("/users/{param1}"))
-            .respond(response().withStatusCode(200).withBody(createUserJson()));
+        String userJson = createUserJson();
+        mockServer.when(
+            HttpRequest.request().withMethod("GET").withPathParameter("document", "34686598650")
+        ).respond(
+            HttpResponse.response().withContentType(org.mockserver.model.MediaType.APPLICATION_JSON).withStatusCode(200).withBody(userJson)
+        );
 
         String json = createJson();
 
