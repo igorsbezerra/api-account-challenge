@@ -46,13 +46,13 @@ public class AccountIntegrationTest {
             HttpResponse.response().withContentType(org.mockserver.model.MediaType.APPLICATION_JSON).withStatusCode(200).withBody(userJson)
         );
 
-        String json = createJson();
-
         mockMvc.perform(
             MockMvcRequestBuilders.post("/accounts")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(json)
+            .content(createJson())
         ).andExpect(MockMvcResultMatchers.status().isCreated());
+
+        MockServerAPIContainer.mockServerClient.reset();
     }
 
     @Test
@@ -62,6 +62,23 @@ public class AccountIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(createInvalidJson())
         ).andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
+    void it_should_not_be_possible_to_create_a_user_when_executing_endpoint_pos_user_not_found() throws JsonProcessingException, Exception {
+        MockServerAPIContainer.mockServerClient.when(
+            HttpRequest.request().withMethod("GET").withPathParameter("document", "34686598650")
+        ).respond(
+            HttpResponse.response().withContentType(org.mockserver.model.MediaType.APPLICATION_JSON).withStatusCode(404)
+        );
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/accounts")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(createJson())
+        ).andExpect(MockMvcResultMatchers.status().is4xxClientError());
+
+        MockServerAPIContainer.mockServerClient.reset();
     }
 
     @Test
@@ -77,6 +94,8 @@ public class AccountIntegrationTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(createInvalidJson())
         ).andExpect(MockMvcResultMatchers.status().is4xxClientError());
+
+        MockServerAPIContainer.mockServerClient.reset();
     }
 
     @Test
