@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.igor.apiaccount.RabbitMQContainer;
 import dev.igor.apiaccount.client.UserClient;
 import dev.igor.apiaccount.dto.UserDTO;
+import dev.igor.apiaccount.model.Account;
 import dev.igor.apiaccount.repository.AccountRepository;
 
 @SpringBootTest
@@ -94,7 +95,7 @@ public class AccountIntegrationTest {
         ).respond(
             HttpResponse.response().withContentType(org.mockserver.model.MediaType.APPLICATION_JSON).withStatusCode(404)
         );
-        
+
         mockMvc.perform(
             MockMvcRequestBuilders.post("/accounts")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -103,7 +104,23 @@ public class AccountIntegrationTest {
     }
 
     @Test
-    void test3() {}
+    void it_should_be_possible_to_find_account_when_executing_endpoint_get() throws JsonProcessingException, Exception {
+        Account account = repository.save(Account.create("12345", "santander", "1"));
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/accounts/" + account.getAccountCode())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(createInvalidJson())
+        ).andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
+    @Test
+    void it_not_should_be_possible_to_find_account_when_executing_endpoint_get_account_not_found() throws JsonProcessingException, Exception {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/accounts/not_found")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(createInvalidJson())
+        ).andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
 
     private String createJson() throws JsonProcessingException {
         ObjectNode objectNode = mapper.createObjectNode();
