@@ -2,14 +2,8 @@ package dev.igor.apiaccount.integration;
 
 import java.util.UUID;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +21,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import dev.igor.apiaccount.MockServerAPIContainer;
 import dev.igor.apiaccount.RabbitMQContainer;
-import dev.igor.apiaccount.client.UserClient;
 import dev.igor.apiaccount.dto.UserDTO;
 import dev.igor.apiaccount.model.Account;
 import dev.igor.apiaccount.repository.AccountRepository;
@@ -37,34 +31,16 @@ import dev.igor.apiaccount.repository.AccountRepository;
 @ActiveProfiles(profiles = "test")
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-@ExtendWith({RabbitMQContainer.class})
-@TestInstance(Lifecycle.PER_CLASS)
+@ExtendWith({ RabbitMQContainer.class, MockServerAPIContainer.class })
 public class AccountIntegrationTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper mapper;
     @Autowired private AccountRepository repository;
-    @Autowired UserClient userClient;
-    private ClientAndServer mockServer;
-
-    @BeforeAll
-    private void start() {
-        mockServer = ClientAndServer.startClientAndServer(8089);
-    }
-
-    @BeforeEach
-    private void reset() {
-        mockServer.reset();
-    }
-
-    @AfterAll
-    private void stop() {
-        mockServer.stop();
-    }
     
     @Test
     void it_must_be_possible_to_create_a_user_when_executing_post_endpoint() throws Exception {
         String userJson = createUserJson();
-        mockServer.when(
+        MockServerAPIContainer.mockServerClient.when(
             HttpRequest.request().withMethod("GET").withPathParameter("document", "34686598650")
         ).respond(
             HttpResponse.response().withContentType(org.mockserver.model.MediaType.APPLICATION_JSON).withStatusCode(200).withBody(userJson)
@@ -90,7 +66,7 @@ public class AccountIntegrationTest {
 
     @Test
     void it_should_not_be_possible_to_create_a_user_when_executing_endpoint_post_user_not_found() throws JsonProcessingException, Exception {
-        mockServer.when(
+        MockServerAPIContainer.mockServerClient.when(
             HttpRequest.request().withMethod("GET").withPathParameter("document", "34686598650")
         ).respond(
             HttpResponse.response().withContentType(org.mockserver.model.MediaType.APPLICATION_JSON).withStatusCode(404)

@@ -26,4 +26,4 @@ spring:
 
 services:
   user:
-    url: http://localhost:8089
+    url: http://localhost:1080
