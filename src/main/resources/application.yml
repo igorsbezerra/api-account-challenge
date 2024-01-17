@@ -1,13 +1,13 @@
 
 server:
-  port: 8081
+  port: ${SERVER_PORT:8081}
 
 spring:
   datasource:
-    url: jdbc:h2:mem:db
+    url: ${DB_HOST:jdbc:h2:mem:db}
     driverClassName: org.h2.Driver
-    username: sa
-    password: sa
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:sa}
   h2:
     console:
       enabled: true
@@ -19,11 +19,11 @@ spring:
   hibernate:
     ddl-auto: update
   rabbitmq:
-    host: rabbitmq
+    host: ${MQ_HOST:localhost}
     port: 5672
-    username: admin
-    password: admin
+    username: ${MQ_USERNAME:admin}
+    password: ${MQ_PASSWORD:admin}
 
 services:
   user:
-    url: http://user:8080
+    url: ${SERVICES_USER_URL:http://localhost:8080}
