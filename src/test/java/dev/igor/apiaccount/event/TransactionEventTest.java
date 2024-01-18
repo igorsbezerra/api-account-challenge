@@ -1,7 +1,6 @@
 package dev.igor.apiaccount.event;
 
-import java.util.UUID;
-
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +30,7 @@ public class TransactionEventTest {
         String json = objectMapper.writeValueAsString(transaction);
         Mockito.when(mapper.readValue(Mockito.anyString(), Mockito.eq(Transaction.class))).thenReturn(transaction);
 
-        event.receiveIncome(json);
+        Assertions.assertDoesNotThrow(() ->event.receiveIncome(json));
     }
 
     @Test
@@ -41,23 +40,29 @@ public class TransactionEventTest {
         String json = objectMapper.writeValueAsString(transaction);
         Mockito.when(mapper.readValue(Mockito.anyString(), Mockito.eq(Transaction.class))).thenReturn(transaction);
 
-        event.receiveOutcome(json);
+        Assertions.assertDoesNotThrow(() -> event.receiveOutcome(json));
+    }
+
+    @Test
+    void must_receive_event_and_direct_it_to_transaction_processing_devolution() throws JsonProcessingException {
+        Transaction transaction = createTransaction();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(transaction);
+        Mockito.when(mapper.readValue(Mockito.anyString(), Mockito.eq(Transaction.class))).thenReturn(transaction);
+
+        Assertions.assertDoesNotThrow(() -> event.receiveDevolution(json));
     }
 
     private Transaction createTransaction() {
-        final var expectedId = UUID.randomUUID().toString();
         final var expectedSourceAccount = "123456";
         final var expectedTargetAccount = "654321";
         final var expectedAmount = "100";
-        final var expectedType = "type";
 
 
         Transaction transaction = new Transaction();
-        transaction.setId(expectedId);
         transaction.setSourceAccount(expectedSourceAccount);
         transaction.setTargetAccount(expectedTargetAccount);
         transaction.setAmount(expectedAmount);
-        transaction.setType(expectedType);
         return transaction;
     }
 }
