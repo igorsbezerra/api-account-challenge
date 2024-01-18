@@ -6,9 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Transaction {
-    private String id;
     private String sourceAccount;
     private String targetAccount;
     private String amount;
-    private String type;
 }

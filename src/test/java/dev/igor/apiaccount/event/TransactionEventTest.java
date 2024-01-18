@@ -1,7 +1,5 @@
 package dev.igor.apiaccount.event;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,19 +54,15 @@ public class TransactionEventTest {
     }
 
     private Transaction createTransaction() {
-        final var expectedId = UUID.randomUUID().toString();
         final var expectedSourceAccount = "123456";
         final var expectedTargetAccount = "654321";
         final var expectedAmount = "100";
-        final var expectedType = "type";
 
 
         Transaction transaction = new Transaction();
-        transaction.setId(expectedId);
         transaction.setSourceAccount(expectedSourceAccount);
         transaction.setTargetAccount(expectedTargetAccount);
         transaction.setAmount(expectedAmount);
-        transaction.setType(expectedType);
         return transaction;
     }
 }
