@@ -32,4 +32,10 @@ public class TransactionEvent {
         Transaction transaction = mapper.readValue(message, Transaction.class);
         service.income(transaction);
     }
+
+    @RabbitListener(queues = {"queue-devolution"})
+    public void receiveDevolution(@Payload String message) throws JsonMappingException, JsonProcessingException {
+        Transaction transaction = mapper.readValue(message, Transaction.class);
+        service.devolution(transaction);
+    }
 }   

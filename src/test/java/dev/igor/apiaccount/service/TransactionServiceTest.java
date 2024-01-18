@@ -49,13 +49,28 @@ public class TransactionServiceTest {
         Assertions.assertEquals(expectedValue, account.getAccountBalance());
     }
 
+    @Test
+    void it_must_be_possible_to_devolution_accounts_balance() {
+        final var expectedBalanceSource = new BigDecimal("1100");
+        final var expectedBalanceTarget = new BigDecimal("900");
+        Transaction transaction = createTransaction();
+        Account accountSource = createSource();
+        Account accountTarget = createTarget();
+        Mockito.when(accountRepository.findById(accountSource.getAccountCode())).thenReturn(Optional.of(accountSource));
+        Mockito.when(accountRepository.findById(accountTarget.getAccountCode())).thenReturn(Optional.of(accountTarget));
+
+        service.devolution(transaction);
+
+        Assertions.assertEquals(expectedBalanceSource, accountSource.getAccountBalance());
+        Assertions.assertEquals(expectedBalanceTarget, accountTarget.getAccountBalance());
+    }
+
     private Transaction createTransaction() {
         final var expectedId = UUID.randomUUID().toString();
         final var expectedSourceAccount = "123456";
         final var expectedTargetAccount = "654321";
         final var expectedAmount = "100";
         final var expectedType = "type";
-
 
         Transaction transaction = new Transaction();
         transaction.setId(expectedId);
@@ -69,6 +84,42 @@ public class TransactionServiceTest {
     private Account createAccount() {
         final var expectedId = UUID.randomUUID().toString();
         final var expectedAccountCode = "123456";
+        final var expectedAgency = "santander";
+        final var expecetedUserId = UUID.randomUUID().toString();
+        final var expectedBalance = new BigDecimal("1000");
+        final var expectedStatus = AccountStatus.ACTIVE;
+
+        Account account = new Account();
+        account.setId(expectedId);
+        account.setAccountCode(expectedAccountCode);
+        account.setAgency(expectedAgency);
+        account.setUserId(expecetedUserId);
+        account.setAccountBalance(expectedBalance);
+        account.setStatus(expectedStatus);
+        return account;
+    }
+
+    private Account createSource() {
+        final var expectedId = UUID.randomUUID().toString();
+        final var expectedAccountCode = "123456";
+        final var expectedAgency = "santander";
+        final var expecetedUserId = UUID.randomUUID().toString();
+        final var expectedBalance = new BigDecimal("1000");
+        final var expectedStatus = AccountStatus.ACTIVE;
+
+        Account account = new Account();
+        account.setId(expectedId);
+        account.setAccountCode(expectedAccountCode);
+        account.setAgency(expectedAgency);
+        account.setUserId(expecetedUserId);
+        account.setAccountBalance(expectedBalance);
+        account.setStatus(expectedStatus);
+        return account;
+    }
+
+    private Account createTarget() {
+        final var expectedId = UUID.randomUUID().toString();
+        final var expectedAccountCode = "654321";
         final var expectedAgency = "santander";
         final var expecetedUserId = UUID.randomUUID().toString();
         final var expectedBalance = new BigDecimal("1000");

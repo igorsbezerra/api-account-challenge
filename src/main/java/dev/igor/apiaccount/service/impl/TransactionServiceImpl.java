@@ -35,4 +35,17 @@ public class TransactionServiceImpl implements TransactionService {
             repository.save(account.get());
         }
     }
+
+    @Override
+    public void devolution(Transaction transaction) {
+        Optional<Account> sourceAccount = repository.findById(transaction.getSourceAccount());
+        Optional<Account> targetAccount = repository.findById(transaction.getTargetAccount());
+
+        if (sourceAccount.isPresent() && targetAccount.isPresent()) {
+            sourceAccount.get().setAccountBalance(sourceAccount.get().getAccountBalance().add(new BigDecimal(transaction.getAmount())));
+            targetAccount.get().setAccountBalance(targetAccount.get().getAccountBalance().subtract(new BigDecimal(transaction.getAmount())));
+            repository.save(sourceAccount.get());
+            repository.save(targetAccount.get());
+        }
+    }
 }
